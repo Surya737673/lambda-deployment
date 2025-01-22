@@ -11,13 +11,14 @@ phases:
   pre_build:
     commands:
       - echo "Running pre-build tasks..."
-      - npm install -g zip-local
 
   build:
     commands:
       - echo "Running tests..."
       - echo "Creating deployment package..."
-      - zip -r lambda-package.zip . -x "buildspec.yml"
+      - powershell Compress-Archive -Path * -DestinationPath lambda-package.zip -Force
+      - powershell Remove-Item lambda-package.zip
+      - powershell Compress-Archive -Path * -DestinationPath lambda-package.zip -Force -Exclude buildspec.yml
 
   post_build:
     commands:
