@@ -1,19 +1,22 @@
 version: 0.2
 phases:
   install:
-    commands: [] # No commands needed in the install phase
+    commands:
+      - echo "Install phase: No tools to install."
   pre_build:
-    commands: [] # No commands needed in the pre-build phase
+    commands:
+      - echo "Pre-build phase: Installing dependencies."
+      - npm install
   build:
     commands:
-      - echo "Running build phase..."
-      - npm install
-      - zip -r lambda-package.zip ./ -x "buildspec.yml"
+      - echo "Build phase: Running tests and creating ZIP file."
+      - npm test
+      - powershell Compress-Archive -Path * -DestinationPath lambda-package.zip -Exclude buildspec.yml
   post_build:
     commands:
-      - echo "Running post-build phase..."
+      - echo "Post-build phase: Deploying to Lambda."
       - aws lambda update-function-code --function-name github-to-lambda --zip-file fileb://lambda-package.zip
-      - echo "Lambda function updated successfully."
 artifacts:
   files:
     - lambda-package.zip
+
