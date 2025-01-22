@@ -1,27 +1,31 @@
 version: 0.2
+
 phases:
   install:
+    runtime-versions:
+      nodejs: 18
     commands:
-      - echo "Downloading and installing 7-Zip..."
-      - curl -o 7z.exe https://www.7-zip.org/a/7z1900-x64.exe
-      - dir 7z.exe
-      - start /wait 7z.exe /S /y
-      - if errorlevel 1 echo "7-Zip installation failed!"
-      - echo "7-Zip installation completed."
-
+      - echo "Installing dependencies..."
+      - npm install
+      
   pre_build:
     commands:
-      - npm install
+      - echo "Running pre-build tasks..."
+      - npm install -g zip-local
 
   build:
     commands:
+      - echo "Running tests..."
       - npm test
-      - "C:\\Program Files\\7-Zip\\7z.exe a lambda-package.zip * -xr!buildspec.yml"
+      - echo "Creating deployment package..."
+      - zip -r lambda-package.zip . -x "buildspec.yml"
 
   post_build:
     commands:
+      - echo "Updating Lambda function..."
       - aws lambda update-function-code --function-name github-to-lambda --zip-file fileb://lambda-package.zip
 
 artifacts:
   files:
     - lambda-package.zip
+  discard-paths: no
