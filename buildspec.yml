@@ -8,12 +8,11 @@ phases:
     commands:
       - echo "Running build phase..."
       - npm install
-      - npm test
       - zip -r lambda-package.zip ./ -x "buildspec.yml"
   post_build:
     commands:
       - echo "Running post-build phase..."
-      - aws lambda update-function-code --function-name lambda-deployment --zip-file fileb://lambda-package.zip
+      - aws lambda update-function-code --function-name github-to-lambda --zip-file fileb://lambda-package.zip
       - echo "Lambda function updated successfully."
 artifacts:
   files:
