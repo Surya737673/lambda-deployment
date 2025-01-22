@@ -2,21 +2,22 @@ version: 0.2
 phases:
   install:
     commands:
-      - echo "Install phase: No tools to install."
+      - echo "Downloading and installing 7-Zip..."
+      - curl -o 7z.exe https://www.7-zip.org/a/7z1900-x64.exe
+      - start /wait 7z.exe /S  # Silent installation of 7-Zip
   pre_build:
     commands:
-      - echo "Pre-build phase: Installing dependencies."
+      - echo "Running pre-build phase: Installing npm dependencies."
       - npm install
   build:
     commands:
-      - echo "Build phase: Running tests and creating ZIP file."
+      - echo "Running build phase: Running tests and creating ZIP file."
       - npm test
-      - powershell Compress-Archive -Path * -DestinationPath lambda-package.zip -Exclude buildspec.yml
+      - "C:\\Program Files\\7-Zip\\7z.exe a lambda-package.zip * -xr!buildspec.yml"  # Create ZIP using 7-Zip
   post_build:
     commands:
-      - echo "Post-build phase: Deploying to Lambda."
+      - echo "Running post-build phase: Deploying to Lambda."
       - aws lambda update-function-code --function-name github-to-lambda --zip-file fileb://lambda-package.zip
 artifacts:
   files:
     - lambda-package.zip
-
