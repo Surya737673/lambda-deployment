@@ -1,11 +1,9 @@
 version: 0.2
 phases:
   install:
-    commands:
-      - echo "Installing dependencies..."
+    commands: [] # No commands needed in the install phase
   pre_build:
-    commands:
-      - echo "Pre-build phase: No commands to run."
+    commands: [] # No commands needed in the pre-build phase
   build:
     commands:
       - echo "Running build phase..."
