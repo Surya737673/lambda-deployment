@@ -5,7 +5,8 @@ phases:
       nodejs: 18
     commands:
       - echo "Installing dependencies..."
-      - npm install -g aws-cli
+      - yum install -y zip 
+      - npm install -g aws-cli 
   pre_build:
     commands:
       - echo "Running pre-build phase..."
@@ -13,10 +14,13 @@ phases:
   build:
     commands:
       - echo "Running build phase..."
-      - zip -r lambda-package.zip . -x buildspec.yml
+      - npm run build
+      - zip -r lambda-package.zip . -x "*.git*" "*.log" "buildspec.yml" "*.zip"
   post_build:
     commands:
       - echo "Running post-build phase..."
+      - ls -l
+      - file lambda-package.zip
       - aws lambda update-function-code --function-name lambda-deployment --zip-file fileb://lambda-package.zip
       - echo "Lambda function code updated successfully"
 artifacts:
