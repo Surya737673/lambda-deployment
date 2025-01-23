@@ -7,7 +7,7 @@ phases:
     commands:
       - echo "Installing dependencies..."
       - npm install
-      
+
   pre_build:
     commands:
       - echo "Running pre-build tasks..."
@@ -15,10 +15,10 @@ phases:
   build:
     commands:
       - echo "Running tests..."
+      - echo "Cleaning up old package..."
+      - if Test-Path lambda-package.zip { Remove-Item -Force lambda-package.zip }
       - echo "Creating deployment package..."
-      - powershell Compress-Archive -Path * -DestinationPath lambda-package.zip -Force
-      - powershell Remove-Item lambda-package.zip
-      - powershell Compress-Archive -Path * -DestinationPath lambda-package.zip -Force -Exclude buildspec.yml
+      - powershell Compress-Archive -Path .\* -DestinationPath lambda-package.zip -Force
 
   post_build:
     commands:
